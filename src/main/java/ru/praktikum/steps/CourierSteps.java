@@ -3,15 +3,13 @@ package ru.praktikum.steps;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.config.LogConfig;
-import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
-import io.restassured.specification.RequestSpecification;
 import org.apache.commons.lang3.RandomStringUtils;
-import ru.praktikum.constants.Url;
 import ru.praktikum.dto.CourierCreateRequest;
 import ru.praktikum.dto.CourierLoginRequest;
 
-import static io.restassured.RestAssured.given;
+
+import static ru.praktikum.client.Client.spec;
 import static ru.praktikum.constants.Url.*;
 
 public class CourierSteps {
@@ -19,14 +17,6 @@ public class CourierSteps {
     static {
         RestAssured.config = RestAssured.config()
                 .logConfig(LogConfig.logConfig().enableLoggingOfRequestAndResponseIfValidationFails());
-    }
-
-    public static RequestSpecification spec() {
-        return given()
-                .contentType(ContentType.JSON)
-                .baseUri(Url.MAIN_URL)
-                .log()
-                .all();
     }
 
     @Step("Генерация рандомного логина курьера")

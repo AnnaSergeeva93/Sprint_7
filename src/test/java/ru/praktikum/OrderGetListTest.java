@@ -2,17 +2,15 @@ package ru.praktikum;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
-import io.restassured.config.LogConfig;
 import io.restassured.response.ValidatableResponse;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Test;
 import ru.praktikum.steps.CourierSteps;
 import ru.praktikum.steps.OrderSteps;
+import static org.apache.http.HttpStatus.*;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.Matchers.is;
 
 public class OrderGetListTest {
     private OrderSteps orderSteps = new OrderSteps();
@@ -27,7 +25,7 @@ public class OrderGetListTest {
     public void orderGetList() {
         orderSteps
                 .orderGetList()
-                .statusCode(200)
+                .statusCode(SC_OK)
                 .body("orders", notNullValue());
     }
 
@@ -44,7 +42,7 @@ public class OrderGetListTest {
 
         orderSteps
                 .orderGetListWithCourierId(id)
-                .statusCode(200)
+                .statusCode(SC_OK)
                 .body("orders", notNullValue());
     }
 
@@ -52,10 +50,10 @@ public class OrderGetListTest {
     public void tearDown() {
         if (login != null && password != null) {
             ValidatableResponse loginResponse = courierSteps.courierLogin(login, password)
-                    .statusCode(200);
+                    .statusCode(SC_OK);
             int courierId = loginResponse.extract().path("id");
             courierSteps.courierDelete(courierId)
-                    .statusCode(200)
+                    .statusCode(SC_OK)
                     .body("ok", Matchers.is(true));
         }
     }

@@ -7,6 +7,7 @@ import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Test;
 import ru.praktikum.steps.CourierSteps;
+import static org.apache.http.HttpStatus.*;
 
 import static org.hamcrest.Matchers.is;
 
@@ -16,6 +17,7 @@ public class CourierCreateTest {
     private String login;
     private String password;
     private String firstName;
+
 
     @Test
     @DisplayName("Успешное создание курьера")
@@ -27,7 +29,7 @@ public class CourierCreateTest {
 
         courierSteps
                 .courierCreate(login, password, firstName)
-                .statusCode(201)
+                .statusCode(SC_CREATED)
                 .body("ok", is(true));
 
         this.login = login;
@@ -43,7 +45,7 @@ public class CourierCreateTest {
 
         courierSteps
                 .courierCreate(null, password, firstName)
-                .statusCode(400)
+                .statusCode(SC_BAD_REQUEST)
                 .body("message", is("Недостаточно данных для создания учетной записи"));
     }
 
@@ -56,7 +58,7 @@ public class CourierCreateTest {
 
         courierSteps
                 .courierCreate("", password, firstName)
-                .statusCode(400)
+                .statusCode(SC_BAD_REQUEST)
                 .body("message", is("Недостаточно данных для создания учетной записи"));
     }
 
@@ -69,7 +71,7 @@ public class CourierCreateTest {
 
         courierSteps
                 .courierCreate(login, null, firstName)
-                .statusCode(400)
+                .statusCode(SC_BAD_REQUEST)
                 .body("message", is("Недостаточно данных для создания учетной записи"));
     }
 
@@ -82,7 +84,7 @@ public class CourierCreateTest {
 
         courierSteps
                 .courierCreate(login, "", firstName)
-                .statusCode(400)
+                .statusCode(SC_BAD_REQUEST)
                 .body("message", is("Недостаточно данных для создания учетной записи"));
     }
 
@@ -96,20 +98,20 @@ public class CourierCreateTest {
 
         courierSteps
                 .courierCreate(login, password, null)
-                .statusCode(400)
+                .statusCode(SC_BAD_REQUEST)
                 .body("message", is("Недостаточно данных для создания учетной записи"));
     }
 
     @Test
-    @DisplayName("Создание курьера без имени")
-    @Description("Создание курьера без имени - возвращает 400 Bad Request")
+    @DisplayName("Создание курьера с пустым значением в имени")
+    @Description("Создание курьера пустым значением в имени - возвращает 400 Bad Request")
     public void createCourierWithEmptyFirstName() {
         login = courierSteps.generateRandomLogin();
         password = courierSteps.generateRandomPassword();
 
         courierSteps
                 .courierCreate(login, password, "")
-                .statusCode(400)
+                .statusCode(SC_BAD_REQUEST)
                 .body("message", is("Недостаточно данных для создания учетной записи"));
     }
 
@@ -123,7 +125,7 @@ public class CourierCreateTest {
 
         courierSteps
                 .courierCreate(login, password, firstName)
-                .statusCode(201)
+                .statusCode(SC_CREATED)
                 .body("ok", is(true));
 
         this.login = login;
@@ -131,7 +133,7 @@ public class CourierCreateTest {
 
         courierSteps
                 .courierCreate(login, password, firstName)
-                .statusCode(409)
+                .statusCode(SC_CONFLICT)
                 .body("message", is("Этот логин уже используется"));
     }
 
@@ -139,10 +141,10 @@ public class CourierCreateTest {
     public void tearDown() {
         if (login != null && password != null) {
             ValidatableResponse loginResponse = courierSteps.courierLogin(login, password)
-                    .statusCode(200);
+                    .statusCode(SC_OK);
             int courierId = loginResponse.extract().path("id");
             courierSteps.courierDelete(courierId)
-                    .statusCode(200)
+                    .statusCode(SC_OK)
                     .body("ok", Matchers.is(true));
         }
     }

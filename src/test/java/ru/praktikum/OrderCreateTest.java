@@ -4,6 +4,7 @@ package ru.praktikum;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +14,7 @@ import ru.praktikum.steps.OrderSteps;
 
 import java.util.List;
 
+import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
 @RunWith(Parameterized.class)
@@ -45,7 +47,7 @@ public class OrderCreateTest {
         ValidatableResponse response = orderSteps.orderCreate(orderCreateRequest);
 
         response
-                .statusCode(201)
+                .statusCode(SC_CREATED)
                 .body("track", notNullValue());
 
         orderId = orderSteps.orderGetId(response);
@@ -57,5 +59,4 @@ public class OrderCreateTest {
             orderSteps.orderCancel(orderId);
         }
     }
-
 }

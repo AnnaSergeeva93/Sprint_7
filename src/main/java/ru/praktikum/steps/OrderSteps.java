@@ -1,24 +1,15 @@
 package ru.praktikum.steps;
 
 import io.qameta.allure.Step;
-import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
-import io.restassured.specification.RequestSpecification;
-import ru.praktikum.constants.Url;
 import ru.praktikum.dto.OrderCreateRequest;
 
-import static io.restassured.RestAssured.given;
+
+import static ru.praktikum.client.Client.spec;
 import static ru.praktikum.constants.Url.*;
 
 public class OrderSteps {
 
-    public static RequestSpecification spec() {
-        return given()
-                .contentType(ContentType.JSON)
-                .baseUri(Url.MAIN_URL)
-                .log()
-                .all();
-    }
 
     @Step("Создание заказа")
     public ValidatableResponse orderCreate(OrderCreateRequest orderCreateRequest) {
